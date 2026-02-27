@@ -21,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c8+f9^6)%@38qok%g+%=h_zmxsy3#!v2g7o98mm@xy3)d2b_3c'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-c8+f9^6)%@38qok%g+%=h_zmxsy3#!v2g7o98mm@xy3)d2b_3c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# Allowed hosts should be explicitly configured; default to local development hosts.
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 
 # Application definition
@@ -56,10 +58,20 @@ MIDDLEWARE = [
 ]
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_ALL_METHODS = True
-CORS_ALLOW_ALL_HEADERS = True
+# In development (DEBUG=True), allow all origins, methods, and headers for convenience.
+# In production (DEBUG=False), require explicit configuration of allowed origins.
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOW_ALL_METHODS = DEBUG
+CORS_ALLOW_ALL_HEADERS = DEBUG
 
+if not DEBUG:
+    # Comma-separated list of allowed origins, e.g.:
+    # CORS_ALLOWED_ORIGINS="https://app.example.com,https://admin.example.com"
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip()
+        for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
 ROOT_URLCONF = 'octofit_tracker.urls'
 
 TEMPLATES = [

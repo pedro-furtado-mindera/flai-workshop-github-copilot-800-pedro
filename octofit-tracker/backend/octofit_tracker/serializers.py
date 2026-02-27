@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['_id', 'username', 'email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class TeamSerializer(serializers.ModelSerializer):
