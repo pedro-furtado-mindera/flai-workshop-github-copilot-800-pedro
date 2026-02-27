@@ -21,8 +21,8 @@ function Home() {
   return (
     <div className="octofit-hero">
       <img src={logo} alt="OctoFit" className="hero-logo" />
-      <h1>OctoFit Tracker</h1>
-      <p className="lead">Track activities, manage teams, and climb the leaderboard!</p>
+      <h1><span className="hero-title-accent">Octo</span>Fit<br />Tracker</h1>
+      <p className="lead">Track activities · Manage teams · Climb the leaderboard</p>
       <div className="hero-cards">
         {NAV_ITEMS.map(({ path, label, icon }) => (
           <NavLink key={path} to={path} className="hero-card">
