@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+# GitHub Codespaces support
+CODESPACE_NAME = os.environ.get('CODESPACE_NAME', '')
+CODESPACE_HOST = f'{CODESPACE_NAME}-8000.app.github.dev' if CODESPACE_NAME else ''
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +33,19 @@ DEBUG = True
 # Allowed hosts should be explicitly configured; default to local development hosts.
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+
+# Add Codespace host to ALLOWED_HOSTS if running in GitHub Codespaces
+if CODESPACE_HOST:
+    ALLOWED_HOSTS.append(CODESPACE_HOST)
+
+# Trust the HTTPS forwarded header from the Codespaces proxy to avoid certificate issues
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+# CSRF trusted origins for Codespaces HTTPS URL
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+if CODESPACE_HOST:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{CODESPACE_HOST}')
 
 
 # Application definition
